@@ -1,0 +1,65 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrument Guessing Game</title>
+</head>
+<body>
+    <h1>Guess the Instrument!</h1>
+    <img src="{{ correct_answer['image'] }}" alt="{{ correct_answer['name'] }}">
+    <form id="answer-form">
+        <div id="options-container">
+        {% for instrument in instruments %}
+            <input type="radio" name="answer" value="{{ instrument['name'] }}" required> {{ instrument['name'] }} <br>
+        {% endfor %}
+        </div>
+        <input type="hidden" name="correct_answer" value="{{ correct_answer['name'] }}">
+        <button type="button" onclick="checkAnswer()", id="check-answer-btn">Submit Answer</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        function checkAnswer() {
+            const form = document.getElementById('answer-form');
+            const formData = new FormData(form);
+            fetch('/check_answer', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = data.result;
+                form.reset();
+                document.querySelector('img').src = data.next_correct_answer.image;
+                document.querySelector('input[name="correct_answer"]').value = data.next_correct_answer.name;
+                updateAnswerOptions(data.next_instruments)
+            });
+        }
+
+        function updateAnswerOptions(options) {
+            const optionsContainer = document.getElementById('options-container');
+
+            while (optionsContainer.firstChild) {
+                optionsContainer.removeChild(optionsContainer.firstChild);
+            }
+
+            options.forEach(option => {
+                const radioBtn = document.createElement('input')
+                radioBtn.type = 'radio';
+                radioBtn.name = 'answer';
+                radioBtn.value = option;
+                radioBtn.required = true;
+                const label = document.createElement('label');
+                label.appendChild(radioBtn);
+                label.appendChild(document.createTextNode(option));
+
+                optionsContainer.appendChild(label);
+                optionsContainer.appendChild(document.createElement('br'));
+            });
+        }
+    </script>
+</body>
+</html>
