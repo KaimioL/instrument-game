@@ -50,7 +50,7 @@ def check_answer():
     elif user_answer == correct_answer:
         result = "Correct! Well Done!"
     else:
-        result = f"Wrong :( Correct anser was {correct_answer}"
+        result = f"Wrong :( Correct answer was {correct_answer}"
 
     instruments_sample = random.sample(instruments, min(len(instruments), 4))
 
