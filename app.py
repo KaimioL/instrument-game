@@ -52,7 +52,7 @@ def check_answer():
     else:
         result = f"Wrong :( Correct anser was {correct_answer}"
 
-    instruments_sample = random.sample(instruments_left, min(len(instruments_left), 4))
+    instruments_sample = random.sample(instruments, min(len(instruments), 4))
 
     return jsonify({'result': result, 'next_instruments': [x['name'] for x in instruments_sample], 'next_correct_answer': random.choice(instruments_sample), 'guessed_instruments': guessed_instruments})
 
