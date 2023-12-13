@@ -50,12 +50,21 @@ def check_answer():
         result = f"Wrong :( Correct anser was {correct_answer}"
 
     if not instruments_left:
-        result += "All instruments guessed! Game over"
+        result += ". All instruments guessed! Game over"
         return jsonify({'result': result, 'next_instruments': [], 'next_correct_answer': "", 'guessed_instruments': 0})
 
 
     next_correct_answer = random.choice(instruments_left)
-    instruments_sample = random.sample(instruments, min(len(instruments), 3))
+    instruments_sample = instruments.copy()
+    
+    # Remove next correct answer from pool of wrong answers
+    for instrument in instruments_sample:
+        if instrument['name'] == next_correct_answer['name']:
+            instruments_sample.remove(instrument)
+
+    instruments_sample = random.sample(instruments_sample, min(len(instruments_sample), 3))
+
+    # Add correct answer to the list answers and shuffle the list
     instruments_sample.append(next_correct_answer)
     random.shuffle(instruments_sample)
 
