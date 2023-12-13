@@ -43,18 +43,23 @@ def check_answer():
         if bool(val):
             del instruments_left[i]
 
-    if not instruments_left:
-        result = "All instruments guessed! Game over"
-        return jsonify({'result': result, 'next_instruments': [], 'next_correct_answer': "", 'guessed_instruments': 0})
-
-    elif user_answer == correct_answer:
+    
+    if user_answer == correct_answer:
         result = "Correct! Well Done!"
     else:
         result = f"Wrong :( Correct anser was {correct_answer}"
 
-    instruments_sample = random.sample(instruments, min(len(instruments), 3))
+    if not instruments_left:
+        result += "All instruments guessed! Game over"
+        return jsonify({'result': result, 'next_instruments': [], 'next_correct_answer': "", 'guessed_instruments': 0})
 
-    return jsonify({'result': result, 'next_instruments': [x['name'] for x in instruments_sample], 'next_correct_answer': random.choice(instruments_sample), 'guessed_instruments': guessed_instruments})
+
+    next_correct_answer = random.choice(instruments_left)
+    instruments_sample = random.sample(instruments, min(len(instruments), 3))
+    instruments_sample.append(next_correct_answer)
+    random.shuffle(instruments_sample)
+
+    return jsonify({'result': result, 'next_instruments': [x['name'] for x in instruments_sample], 'next_correct_answer': next_correct_answer, 'guessed_instruments': guessed_instruments})
 
 @app.route('/add_instrument', methods=['POST'])
 def add_instrument():
