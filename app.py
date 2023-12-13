@@ -14,7 +14,7 @@ instruments = [
 
 @app.route('/')
 def index():
-    instruments_sample = random.sample(instruments, 4)
+    instruments_sample = random.sample(instruments, min(len(instruments), 4))
 
     return render_template('index.html', instruments = instruments_sample, correct_answer = random.choice(instruments_sample))
 
@@ -22,11 +22,30 @@ def index():
 def check_answer():
     user_answer = request.form['answer']
     correct_answer = request.form['correct_answer']
-    if user_answer == correct_answer:
+    guessed_instruments = int(request.form['guessed_instruments'])
+
+    for i, instrument in enumerate(instruments):
+        if instrument['name'] == correct_answer:
+            guessed_instruments += 2**i
+
+    instruments_left = instruments.copy()
+
+    guessed_instruments_list = [int(i) for i in bin(guessed_instruments)[2:]]
+    guessed_instruments_list.reverse()
+
+    for i, val in reversed(list(enumerate(guessed_instruments_list))):
+        if bool(val):
+            del instruments_left[i]
+
+    if not instruments_left:
+        result = "All instruments guessed! Game over"
+        return jsonify({'result': result, 'next_instruments': [], 'next_correct_answer': "", 'guessed_instruments': 0})
+
+    elif user_answer == correct_answer:
         result = "Correct! Well Done!"
     else:
         result = f"Wrong :( Correct anser was {correct_answer}"
-    
-    instruments_sample = random.sample(instruments, 4)
 
-    return jsonify({'result': result, 'next_instruments': [x['name'] for x in instruments_sample], 'next_correct_answer': random.choice(instruments_sample)})
+    instruments_sample = random.sample(instruments_left, min(len(instruments_left), 4))
+
+    return jsonify({'result': result, 'next_instruments': [x['name'] for x in instruments_sample], 'next_correct_answer': random.choice(instruments_sample), 'guessed_instruments': guessed_instruments})

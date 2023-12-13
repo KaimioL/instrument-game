@@ -17,6 +17,7 @@
         {% endfor %}
         </div>
         <input type="hidden" name="correct_answer" value="{{ correct_answer['name'] }}">
+        <input type="hidden" name="guessed_instruments" value=0>
         <button type="button" onclick="checkAnswer()", id="check-answer-btn">Submit Answer</button>
     </form>
     <div id="result"></div>
@@ -35,6 +36,7 @@
                 form.reset();
                 document.querySelector('img').src = data.next_correct_answer.image;
                 document.querySelector('input[name="correct_answer"]').value = data.next_correct_answer.name;
+                document.querySelector('input[name="guessed_instruments"]').value = data.guessed_instruments;
                 updateAnswerOptions(data.next_instruments)
             });
         }
