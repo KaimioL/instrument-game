@@ -50,9 +50,9 @@ def check_answer():
     elif user_answer == correct_answer:
         result = "Correct! Well Done!"
     else:
-        result = f"Wrong :( Correct answer was {correct_answer}"
+        result = f"Wrong :( Correct anser was {correct_answer}"
 
-    instruments_sample = random.sample(instruments, min(len(instruments), 4))
+    instruments_sample = random.sample(instruments, min(len(instruments), 3))
 
     return jsonify({'result': result, 'next_instruments': [x['name'] for x in instruments_sample], 'next_correct_answer': random.choice(instruments_sample), 'guessed_instruments': guessed_instruments})
 
